@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿ using Microsoft.AspNetCore.Mvc;
 using CompareBikes.Models;
 using CompareBikes.Services;
 
@@ -16,32 +16,9 @@ namespace CompareBikes.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Model>> GetModels(string brand, int? year, string? type) 
+        public ActionResult<IEnumerable<Model>> GetModels(string brand, string? category, int? year, int? minYear, int maxYear) 
         {
-            var modelsList = ModelsService.GetModelsList(brand, year, type, Configuration);
-
-            if (modelsList == null) return NotFound();
-
-            return Ok(modelsList);
-        }
-
-        [Route("years/{min}-{max}")]
-        [HttpGet]
-        public ActionResult<IEnumerable<Model>> GetModelsByYear(string brand, string? type,  int min, int max)
-        {
-            var modelsList = ModelsService.GetModelsListByYear(brand, type, min, max, Configuration);
-
-            if (modelsList == null) return NotFound();
-
-            return Ok(modelsList);
-        }
-
-
-        [Route("power/{min}-{max}")]
-        [HttpGet]
-        public ActionResult<IEnumerable<Model>> GetModelsByPower(string brand, string? type, int min, int max)
-        {
-            var modelsList = ModelsService.GetModelsListByPower(brand, type, min, max, Configuration);
+            var modelsList = ModelsService.filterModels(brand, category, year, minYear, maxYear, Configuration);
 
             if (modelsList == null) return NotFound();
 
@@ -50,35 +27,13 @@ namespace CompareBikes.Controllers
 
         [Route("search/{value}")]
         [HttpGet]
-        public ActionResult<IEnumerable<Model>> GetSearchResults(string value)
+        public ActionResult<IEnumerable<Model>> GetModelsBySearch(string value)
         {
-            var modelsList = ModelsService.GetSearchResultsList(value, Configuration);
+            var modelsList = ModelsService.getModelsBySearchQuery(value, Configuration);
 
             if (modelsList == null) return NotFound();
 
             return Ok(modelsList);
-        }
-
-        [Route("{brand}/{value}")]
-        [HttpGet]
-        public ActionResult<IEnumerable<Model>> GetSearchedModels(string brand, string value)
-        {
-            var modelsList = ModelsService.GetSearchedModelsList(brand, value, Configuration);
-
-            if (modelsList == null) return NotFound();
-
-            return Ok(modelsList);
-        }
-
-        [Route("specs/{brand}/{model}")]
-        [HttpGet]
-        public ActionResult<IEnumerable<BikeSpecs>> GetBikeSpecs(string model, int year)
-        {
-            var specs = ModelsService.GetBikeSpecsList(model, year, Configuration);
-
-            if (specs == null) return NotFound();
-
-            return Ok(specs);
         }
     }
 }
